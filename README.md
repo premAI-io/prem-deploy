@@ -4,9 +4,9 @@ Facilitate deployments of Prem microservices with utility scripts and an HTTP se
 
 ## Description
 
-This solution provides a two-fold deployment strategy tailored for the PREM microservices:
+This solution provides a two-fold deployment strategy tailored for the Prem microservices:
 
-1. **Utility Scripts**: Simplifies the manual management (start, stop, build, and update) of Dockerized PREM microservices directly on your machine.
+1. **Utility Scripts**: Simplifies the manual management (start, stop, build, and update) of Dockerized Prem microservices directly on your machine.
 
 2. **HTTP Deployment Server**: Offers a secure, automated deployment pipeline, allowing third parties (like CI/CD tools or authorized developers) to trigger updates remotely by interfacing with a dedicated HTTP endpoint.
 
