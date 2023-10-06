@@ -1,6 +1,6 @@
-# Deployment Server for PREM Microservices
+# Deployment tools for Prem microservices
 
-Facilitate deployments of PREM microservices with utility scripts and an HTTP server designed to safely handle updates, either manually or automatically via third-party services like GitHub Actions.
+Facilitate deployments of Prem microservices with utility scripts and an HTTP server designed to safely handle updates, either manually or automatically via third-party services like GitHub Actions.
 
 ## Description
 
