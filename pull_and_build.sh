@@ -53,5 +53,5 @@ if [[ "$REPO" == "prem-gateway" ]]; then
     # 3. cd to auth and run docker build
     cd auth && sudo docker build -t "${REPO}_auth_local" .
 else
-    sudo docker build -t "${REPO}" .
+    sudo docker build -t "${REPO}_local" .
 fi
