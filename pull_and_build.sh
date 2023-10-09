@@ -16,7 +16,7 @@ BRANCH=$3
 if [[ ! -d "$REPO" ]]; then
     # If not, create it, cd into it, and clone the repo
     mkdir "$REPO" && cd "$REPO"
-    git clone "https://github.com/$USER/$REPO.git" --branch "$BRANCH" --single-branch "$REPO"
+    git clone "https://github.com/$USER/$REPO.git" --branch "$BRANCH" --single-branch .
 else
     # If it does, cd into it
     cd "$REPO"

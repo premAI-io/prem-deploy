@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os/exec"
+	"regexp"
 )
 
 var (
@@ -36,6 +37,8 @@ func deployHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.URL.Query().Get("user")
 	branch := r.URL.Query().Get("branch")
 
+	log.Infof("Query parameters provided: repo=%s, user=%s, branch=%s", repo, user, branch)
+
 	if repo == "" && user == "" && branch == "" {
 		log.Info("No query parameters provided.")
 		// No query parameters: Run pull_and_build_all.sh, stop.sh and start.sh
@@ -57,13 +60,13 @@ func deployHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Start failed.", http.StatusInternalServerError)
 			return
 		}
-		log.Info(stdout)
+		basicAuth := extractUserNameAndPass(stdout)
+		log.Info(basicAuth)
 
-		if _, err := fmt.Fprintf(w, "Pulled and built all repos, stopped and started containers.\n"); err != nil {
+		if _, err := fmt.Fprintf(w, "Pulled and built all repos, stopped and started containers.\n %s", basicAuth); err != nil {
 			log.Errorf("Error writing response: %v", err)
 		}
 	} else if repo != "" && user != "" && branch != "" {
-		log.Infof("Query parameters provided: repo=%s, user=%s, branch=%s", repo, user, branch)
 		// Query parameters provided: Run pull_and_build.sh with parameters and restart containers
 		if _, stderr, err := runCommand("/bin/bash", "pull_and_build.sh", user, repo, branch); err != nil {
 			log.Errorf("Error during pull_and_build.sh: %v, stderr: %v", err, stderr)
@@ -77,13 +80,16 @@ func deployHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if _, stderr, err := runCommand("/bin/bash", "start.sh"); err != nil {
+		stdout, stderr, err := runCommand("/bin/bash", "start.sh")
+		if err != nil {
 			log.Errorf("Error during start.sh: %v, stderr: %v", err, stderr)
 			http.Error(w, "Stop start.", http.StatusInternalServerError)
 			return
 		}
+		basicAuth := extractUserNameAndPass(stdout)
+		log.Info(basicAuth)
 
-		if _, err := fmt.Fprintf(w, "Pulled and built %s and restarted containers.\n", repo); err != nil {
+		if _, err := fmt.Fprintf(w, "Pulled and built %s and restarted containers. \n, %s", repo, basicAuth); err != nil {
 			log.Error(err)
 		}
 	} else {
@@ -103,6 +109,21 @@ func runCommand(command string, args ...string) (string, string, error) {
 	err := cmd.Run()
 
 	return stdout.String(), stderr.String(), err
+}
+
+func extractUserNameAndPass(str string) string {
+	reUser := regexp.MustCompile(`Basic auth user: ([^\n]+)`)
+	userMatches := reUser.FindStringSubmatch(str)
+
+	// Regular expression to extract password
+	rePass := regexp.MustCompile(`Basic auth pass: ([^\n]+)`)
+	passMatches := rePass.FindStringSubmatch(str)
+
+	if len(userMatches) > 1 && len(passMatches) > 1 {
+		return fmt.Sprintf("Basic auth %s:%s", userMatches[1], passMatches[1])
+	}
+
+	return ""
 }
 
 func main() {
