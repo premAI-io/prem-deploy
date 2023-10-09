@@ -15,6 +15,7 @@ BRANCH=$3
 # Check if folder exists
 if [[ ! -d "$REPO" ]]; then
     # If not, create it, cd into it, and clone the repo
+    echo "Cloning $REPO..."
     mkdir "$REPO" && cd "$REPO"
     git clone "https://github.com/$USER/$REPO.git" --branch "$BRANCH" --single-branch .
 else
@@ -28,6 +29,7 @@ else
 
     # Check if the current branch and remote URL match the passed arguments
     if [[ "$CURRENT_BRANCH" == "$BRANCH" && "$CURRENT_REMOTE_URL" == "https://github.com/$USER/$REPO.git" ]]; then
+        echo "Pulling latest changes for $BRANCH..."
         # If so, just pull the latest changes
         git pull origin "$BRANCH"
     else
@@ -36,6 +38,7 @@ else
 
         # If checkout fails, add the new user as a remote and try again
         if [[ "$?" -ne 0 ]]; then
+            echo "Adding $USER as a remote..."
             git remote add "$USER" "https://github.com/$USER/$REPO.git" 2> /dev/null || true # Ignore error if remote already exists
             git fetch "$USER"
             git checkout "$BRANCH"
