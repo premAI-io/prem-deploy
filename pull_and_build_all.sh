@@ -3,7 +3,7 @@
 set -e
 
 # Set default user and branch values
-DEFAULT_USER="premaI-io"
+DEFAULT_USER="premAI-io"
 DEFAULT_BRANCH="main"
 
 # Check for provided arguments and assign them or use default values
