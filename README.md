@@ -22,15 +22,15 @@ This solution provides a two-fold deployment strategy tailored for the Prem micr
 
 Utilize the provided scripts for hands-on management of your microservices:
 
-Pull and build Docker image for specified USER, REPO, and BRANCH:
-```bash
-./pull_and_build.sh {USER} {REPO} {BRANCH}
-```
-
-Bulk pull and build for 'prem-gateway', 'prem_app', and 'prem-daemon' with specified USER and REPO.
+Initially, bulk pull and build for 'prem-gateway', 'prem_app', and 'prem-daemon' with specified USER and REPO.
 Note that if arguments are not provided, the default values are 'premAI-io' and 'main':
 ```bash
 ./pull_and_build_all.sh {PREM-GATEWAY-USER} {PREM-GATEWAY-BRANCH} {PREM-APP-USER} {PREM-APP-BRANCH} {PREM-DAEMON-USER} {PREM-DAEMON-BRANCH}
+```
+
+Pull and build Docker image for specified USER, REPO, and BRANCH:
+```bash
+./pull_and_build.sh {USER} {REPO} {BRANCH}
 ```
 
 Boot up all Prem microservices:
