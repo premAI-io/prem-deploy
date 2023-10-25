@@ -63,13 +63,25 @@ fi
      # If $BRANCH is main, pull the latest changes
      if [ "$BRANCH" == "main" ]; then
          echo "Branch is main"
-        git checkout main
-         git pull origin main
+         git checkout main
+         git pull --no-edit origin main
      else
          echo "Branch is not main"
-         # If $BRANCH is not main, checkout to $BRANCH
-         git checkout "$BRANCH"
-         git pull origin "$BRANCH"
+         git fetch origin
+         # Check if the branch exists on the remote
+         if git branch -r | grep -q "origin/$BRANCH"; then
+             echo "Checking out $BRANCH"
+             # Check if the branch exists locally
+             if git branch | grep -q "$BRANCH"; then
+                 git checkout "$BRANCH"
+             else
+                 git checkout --track "origin/$BRANCH"
+             fi
+             git pull --no-edit origin "$BRANCH"
+         else
+             echo "Error: Branch $BRANCH does not exist on the remote."
+             exit 1
+         fi
      fi
  else
      # If $USER is different from $PREMAI_IO_USER
@@ -81,8 +93,8 @@ fi
      fi
      git fetch "$USER"
      # Checkout to $BRANCH and pull the latest changes
-     git checkout "$BRANCH"
-     git pull "$USER" "$BRANCH"
+     git checkout -- "$BRANCH"
+     git pull --no-edit "$USER" "$BRANCH"
  fi
 
 # Build the Docker image
